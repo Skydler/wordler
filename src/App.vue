@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from "vue";
-import { isMatchingWord, hasLetters } from "./lib/matcher.js";
+import {
+  filterMatching,
+  filterContains,
+  filterExcludes,
+} from "./lib/matcher.js";
 import { retrieveWords } from "./api/wordList.js";
 
 retrieveWords().then((data) => {
@@ -9,48 +13,22 @@ retrieveWords().then((data) => {
 
 let total_words = [];
 const m_words = ref([]);
-const matching_letters = ref(["", "", "", "", ""]);
-const contains = ref("");
-const excludes = ref("");
-
-function filterMatching(words) {
-  const normalized_letters = matching_letters.value.map((letter) =>
-    letter ? letter : "_"
-  );
-
-  const matching_words = words.filter((word) =>
-    isMatchingWord(word, normalized_letters)
-  );
-
-  return matching_words;
-}
-
-function filterContains(words) {
-  const matching_words = words.filter((word) =>
-    hasLetters(word, contains.value)
-  );
-
-  return matching_words;
-}
-
-function filterExcludes(words) {
-  const matching_words = words.filter((word) =>
-    hasLetters(word, excludes.value, true)
-  );
-
-  return matching_words;
-}
+const word_filters = ref({
+  green_letters: ["", "", "", "", ""],
+  yellow_letters: ["", "", "", "", ""],
+  grey_letters: "",
+});
 
 function handleReset() {
   m_words.value = total_words;
-  matching_letters.value = ["", "", "", "", ""];
 }
 
 function handleSubmit() {
   let words = m_words.value;
-  words = filterExcludes(words);
-  words = filterContains(words);
-  words = filterMatching(words);
+  const filters = word_filters.value;
+  words = filterExcludes(words, filters.grey_letters);
+  words = filterContains(words, filters.yellow_letters);
+  words = filterMatching(words, filters.green_letters);
 
   m_words.value = words;
 }
@@ -64,7 +42,7 @@ function handleSubmit() {
     <input
       v-for="n in 5"
       :key="n"
-      v-model.trim="matching_letters[n - 1]"
+      v-model.trim="word_filters.green_letters[n - 1]"
       maxlength="1"
       size="1"
       placeholder="_"
@@ -72,11 +50,18 @@ function handleSubmit() {
   </div>
   <div>
     <h3>Contains letters:</h3>
-    <input v-model.trim="contains" />
+    <input
+      v-for="n in 5"
+      :key="n"
+      v-model.trim="word_filters.yellow_letters[n - 1]"
+      maxlength="1"
+      size="1"
+      placeholder="_"
+    />
   </div>
   <div>
     <h3>Exclude letters:</h3>
-    <input v-model.trim="excludes" />
+    <input v-model.trim="word_filters.grey_letters" />
   </div>
 
   <div>
