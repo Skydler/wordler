@@ -38,7 +38,7 @@ function handleSubmit() {
   <h1>Wordle helper!</h1>
 
   <div>
-    <h3>Matching letters:</h3>
+    <h3>Green letters:</h3>
     <input
       v-for="n in 5"
       :key="n"
@@ -49,7 +49,7 @@ function handleSubmit() {
     />
   </div>
   <div>
-    <h3>Contains letters:</h3>
+    <h3>Yellow letters:</h3>
     <input
       v-for="n in 5"
       :key="n"
@@ -60,7 +60,7 @@ function handleSubmit() {
     />
   </div>
   <div>
-    <h3>Exclude letters:</h3>
+    <h3>Grey letters:</h3>
     <input v-model.trim="word_filters.grey_letters" />
   </div>
 
