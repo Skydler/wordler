@@ -1,18 +1,26 @@
 export function filterMatching(words, letters) {
-  const matching_words = words.filter((word) => isMatchingWord(word, letters));
+  const matching_words = words.filter((word) =>
+    isMatchingWord(word, normalize_letters(letters))
+  );
   return matching_words;
 }
 
 export function filterContains(words, letters) {
-  const matching_words = words.filter((word) => hasLetters(word, letters));
+  const matching_words = words.filter((word) =>
+    hasLetters(word, normalize_letters(letters))
+  );
   return matching_words;
 }
 
 export function filterExcludes(words, letters) {
   const matching_words = words.filter((word) =>
-    excludeWithLetters(word, letters)
+    excludeWithLetters(word, normalize_letters(letters))
   );
   return matching_words;
+}
+
+function normalize_letters(letters) {
+  return Array.from(letters).map((letter) => letter.toLowerCase());
 }
 
 function isMatchingWord(word, match) {
