@@ -71,11 +71,15 @@ function handleSubmit() {
 
   <div>
     <h3>Possible words: {{ m_words.length }}</h3>
-    <ul>
-      <li v-for="(word, index) in m_words" :key="index">
-        {{ word }}
-      </li>
-    </ul>
+    <RecycleScroller
+      class="scroller"
+      :items="m_words"
+      :item-size="30"
+      page-mode
+      v-slot="{ item }"
+    >
+      {{ item }}
+    </RecycleScroller>
   </div>
 </template>
 
@@ -96,11 +100,5 @@ h1 {
 
 h3 {
   margin-top: 50px;
-}
-
-ul {
-  height: 200px;
-  overflow: hidden;
-  overflow-y: scroll;
 }
 </style>
