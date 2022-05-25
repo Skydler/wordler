@@ -12,7 +12,7 @@ retrieveWords().then((data) => {
 });
 
 let total_words = [];
-const m_words = ref([]);
+const m_words = ref(null);
 const word_filters = ref({
   green_letters: ["", "", "", "", ""],
   yellow_letters: ["", "", "", "", ""],
@@ -30,10 +30,15 @@ function sliceIntoChunks(arr, chunkSize) {
 
 function handleReset() {
   m_words.value = total_words;
+  word_filters.value = {
+    green_letters: ["", "", "", "", ""],
+    yellow_letters: ["", "", "", "", ""],
+    grey_letters: "",
+  };
 }
 
 function handleSubmit() {
-  let words = m_words.value;
+  let words = total_words;
   const filters = word_filters.value;
   words = filterExcludes(words, filters.grey_letters);
   words = filterContains(words, filters.yellow_letters);
@@ -59,6 +64,7 @@ function handleSubmit() {
             placeholder="_"
             outline
             color="success"
+            @keyup="handleSubmit"
           />
         </div>
       </div>
@@ -74,36 +80,34 @@ function handleSubmit() {
             placeholder="_"
             outline
             color="warning"
+            @keyup="handleSubmit"
           />
         </div>
       </div>
     </div>
     <div>
       <h3 class="title">Grey letters:</h3>
-      <va-input v-model.trim="word_filters.grey_letters" outline color="gray" />
+      <va-input
+        v-model.trim="word_filters.grey_letters"
+        outline
+        color="gray"
+        @keyup="handleSubmit"
+      />
     </div>
 
     <div class="btn-wrapper">
       <va-button
         icon="restart_alt"
-        color="info"
+        color="warning"
         gradient
         :rounded="false"
         @click="handleReset"
-        >Reset</va-button
-      >
-      <va-button
-        icon="check_circle"
-        color="success"
-        gradient
-        :rounded="false"
-        @click="handleSubmit"
-        >Save</va-button
+        >Clear inputs</va-button
       >
     </div>
   </form>
 
-  <div v-if="m_words.length" class="words-container">
+  <div v-if="m_words !== null" class="words-container">
     <h3 class="display-6">Possible words: {{ m_words.length }}</h3>
     <RecycleScroller
       class="scroller"
@@ -116,6 +120,8 @@ function handleSubmit() {
       <va-button
         class="word-option"
         :rounded="false"
+        color="info"
+        gradient
         v-for="(word, index) in item"
         :key="index"
       >
@@ -188,5 +194,14 @@ form > div {
 .words-container {
   text-align: center;
   margin: 50px 0px;
+}
+
+@media (max-width: 600px) {
+  .upper-form {
+    flex-direction: column;
+  }
+  .upper-form > div {
+    margin: 10px 0;
+  }
 }
 </style>
